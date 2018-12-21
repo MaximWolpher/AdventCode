@@ -42,9 +42,7 @@ def task_one(input_data):
     variance = 2**1000
     last_pos = 0
     for seconds in range(50000):
-        var_x = np.var(pos[:, 0])
         var_y = np.var(pos[:, 1])
-        #print(var_y, variance)
         if var_y > variance:
             print('seconds: ', seconds)
             return draw(last_pos)
