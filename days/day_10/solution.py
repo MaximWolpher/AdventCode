@@ -17,36 +17,47 @@ def parse(input_data):
 
 
 def draw(input_data):
-    draw_data = input_data[:]
+    draw_data = input_data.copy()
     min_x = np.min(draw_data[:, 0])
     mm_x = np.abs(min_x - np.max(draw_data[:, 0]))
     min_y = np.min(draw_data[:, 1])
     mm_y = np.abs(min_y - np.max(draw_data[:, 1]))
-    print(draw_data)
-    print(min_x, min_y, mm_x, mm_y)
-    draw_data[:, 0] += np.abs(min_x)
-    draw_data[:, 1] += np.abs(min_y)
-    print(draw_data)
-    board = np.zeros((mm_x+1, mm_y+1))
-    print(board.shape)
+    if min_x < 0:
+        draw_data[:, 0] += np.abs(min_x)
+    else:
+        draw_data[:, 0] -= np.abs(min_x)
+    if min_y < 0:
+        draw_data[:, 1] += np.abs(min_y)
+    else:
+        draw_data[:, 1] -= np.abs(min_y)
+    board = np.zeros((mm_x+1, mm_y+1), dtype=int)
     for px, py in draw_data:
         board[px, py] = 1
-    print(board)
+    return board.T
 
 
 def task_one(input_data):
     pos = input_data[:, :2]
     vel = input_data[:, 2:]
     variance = 2**1000
-    for seconds in range(4):
-        new_variance = np.var(pos)
-        print(new_variance)
-        draw(pos)
-        pos += vel
+    last_pos = 0
+    for seconds in range(50000):
+        var_x = np.var(pos[:, 0])
+        var_y = np.var(pos[:, 1])
+        #print(var_y, variance)
+        if var_y > variance:
+            print('seconds: ', seconds)
+            return draw(last_pos)
+        else:
+            variance = var_y
+            last_pos = pos.copy()
+            pos += vel
     return "nothing found"
 
 
 parsed_test = parse(test_data)
 parsed_data = parse(data)
 
-print(task_one(parsed_test))
+with open('result.txt', 'a') as f:
+    for line in task_one(parsed_data):
+        f.writelines(str(line))
