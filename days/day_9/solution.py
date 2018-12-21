@@ -18,19 +18,27 @@ def task_one(input_data):
     circle = [0, 1]
     current_idx = 1
     L = input_data[1]
-    print(L)
-    for marble in range(2, L+1):
-        plus_one = (current_idx + 1) % (marble + 1)
-        plus_two = (current_idx + 2) % (marble + 1)
-        print(plus_one, plus_two)
-        circle = circle[:plus_one] + [marble] + circle[plus_two:]
-        current_idx = marble
-        print(circle)
-        break
+    players = [0]*input_data[0]
+    player_count = 0
+    for marble in range(2, L + 1):
+        player_count = (player_count + 1) % input_data[0]
+        if marble % 23 == 0:
+            players[player_count] += marble
+            drop_marble_index = (current_idx-7) % len(circle)
+            players[player_count] += circle[drop_marble_index]
+            del circle[drop_marble_index]
+            current_idx = drop_marble_index % len(circle)
+        else:
+            plus_one = (current_idx + 1) % marble
+            plus_two = (current_idx + 2) % marble
+            if plus_two == 0:
+                plus_two = marble
+            circle = circle[:plus_one+1] + [marble] + circle[plus_two:]
+            current_idx = circle.index(marble)
+    return max(players)
 
 
 parsed_test = parse(test_data, True)
 parsed_data = parse(data)
 
-print(task_one(parsed_test[0][:2]))
-print(test_data[2])
+print(task_one(parsed_data))
