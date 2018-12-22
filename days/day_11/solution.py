@@ -16,24 +16,29 @@ def power(x: int,y: int, serial: int) -> int:
     return tenth((((x + 10) * y) + serial) * (x + 10)) - 5
 
 
-def find_3x3(row, col, board):
-    return np.sum(board[col: col+3, row: row+3])
+def find_square(row, col, board, square):
+    return np.sum(board[col: col+square, row: row+square])
 
 
-def task_one(input_data, grid_x, grid_y):
+def task(input_data, grid_x, grid_y, squares):
     board = np.zeros((grid_x, grid_y))
     for row in range(grid_x):
         for col in range(grid_y):
             board[col, row] = power(col, row, input_data)
     max_score = 0
     good_coords = [0, 0]
-    for row in range(grid_x-1):
-        for col in range(grid_y-1):
-            score = find_3x3(col, row, board)
-            if score > max_score:
-                max_score = score
-                good_coords = [row, col]
-    return good_coords, max_score
+    best_square = 0
+    for square in squares:
+        for row in range(grid_x-square+1):
+            for col in range(grid_y-square+1):
+                score = find_square(col, row, board, square=square)
+                if score > max_score:
+                    max_score = score
+                    good_coords = [row, col]
+                    best_square = square
+    return good_coords, best_square
 
 
-print(task_one(2187,300,300))
+print('Task One: ', task(2187, 300, 300, squares=[3]))
+print('Task Two: ', task(2187, 300, 300, squares=range(1, 301)))
+
